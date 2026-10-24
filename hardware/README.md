@@ -24,6 +24,32 @@ Skript: `bygg_skal_snabbfaste.py`. Ritning sett framifrån: `skal7s_ritning.png`
 - **Utskrift:** PETG eller ASA, baksidan nedåt, inga stöd. Klämmorna platt.
 - USB-hålet är avlångt så att USB-C-kontakten går att trä in utifrån.
 
+## ISOBUS-plugg (utskriven kontakt till hyttens uttag)
+
+Riktiga kontakter till hyttens 9-poliga ISOBUS-uttag (TE/AMP CPC) är svåra att få tag på. Det här är en utskriven
+plugg i tre delar som passar uttaget på de provade Fendt S4-traktorerna.
+
+<p align="center"><img src="isobus_plugg.png" width="560" alt="ISOBUS-pluggen"></p>
+
+| Del | Fil | Antal |
+|---|---|---|
+| Kärna (stifthålen, fläns och gänga) | `isobus_plugg_karna.stl` | 1 |
+| Låsring | `isobus_plugg_lasring.stl` | 1 |
+| Kåpa | `isobus_plugg_kapa.stl` | 1 |
+
+- **Version 2.2.** Version 2.1 satt och låste i uttaget men var för lång – kontakthylsorna nådde inte fram. I 2.2 är
+  hylsornas tunnlar kortare (18 mm) och kärnans ytterdiameter 0,15 mm större för bättre friktion. **2.2 är inte
+  provad i uttaget än** – skriv ut en kärna först och prova.
+- **Så fungerar den:** kärnan trycks in i uttaget. Låsringen träs utanpå och vrids ett halvt varv – två klackar följer
+  uttagets två spår och drar in kontakten. Kåpan skruvas på kärnans gänga och håller låsringen på plats; kabeln går ut
+  genom kåpans bakände.
+- **Kontakterna:** bara två hål används, CAN_H och CAN_L (se huvudsidan). Vilka kontakthylsor som passar i kärnan
+  fylls i här när pluggen är provad.
+- **Utskrift:** PETG eller ASA, kärnan med spetsen nedåt. Små toleranser – skriv gärna med 0,2 mm lagerhöjd eller finare.
+- **Skript:** `bygg_isobus_plugg.py` (Python + trimesh). Det bygger på en separat insats med stifthålen (`k.stl`) som
+  inte finns med här, så STL-filerna ovan är de som gäller. Mät ditt eget uttag om pluggen inte passar.
+- Kontrollera alltid med ett mätinstrument vilka stift i uttaget som är CAN_H och CAN_L innan du ansluter.
+
 ## Robust skal (alternativ)
 
 Framskal med 5 mm vägg, baklock, TPU-stötkuddar, kabelklämmor och 38 mm RAM-kula. Skript: `bygg_skal_robust.py`.

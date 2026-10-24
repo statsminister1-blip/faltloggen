@@ -25,6 +25,8 @@ The display **only listens**. It never sends anything on the bus and cannot cont
 
 <p align="center"><img src="bilder/screen_tractor.png" width="640" alt="The tractor page"></p>
 
+**Pictures of every page:** [SCREENSHOTS.md](SCREENSHOTS.md)
+
 ## Parts list
 
 Check prices and stock yourself – they change.
@@ -34,7 +36,7 @@ Check prices and stock yourself – they change.
 | **Waveshare ESP32-S3-Touch-LCD-7** (7", 800 × 480, ESP32-S3 with 16 MB flash and 8 MB PSRAM, CAN) | 1 | [waveshare.com](https://www.waveshare.com/esp32-s3-touch-lcd-7.htm). The software is written for *this* model – not "7B" or other sizes. |
 | microSD card, 32 GB | 1 | Formatted FAT32 over the whole card. Map images, tracks, reports and (optional) logs are stored here. |
 | USB-C cable and 5 V USB power in the cab | 1 | At least 1 A. The display draws about 0.5 A. |
-| Connector for the cab ISOBUS socket (in-cab, 9 pins) + two wires | 1 | See [Connecting to ISOBUS](#connecting-to-isobus). |
+| Connector for the cab ISOBUS socket (in-cab, 9 pins) + two wires | 1 | Hard to buy – there is a [printable plug](hardware/README.md#isobus-plugg-utskriven-kontakt-till-hyttens-uttag). See [Connecting to ISOBUS](#connecting-to-isobus). |
 | M3 × 8 socket head screw | 4 | Holds the display in the housing. |
 | M3 screws for the cable clamps | 4 | About 8–10 mm. |
 | Filament, PETG or ASA | approx. 150 g | For the housing. PLA gets too soft in a warm cab. |
@@ -45,6 +47,18 @@ Check prices and stock yourself – they change.
 **Housing:** the 3D files are in [hardware/](hardware/README.md). The standard is the one-piece housing with a
 quick mount for the phone holder in the Fendt cab (`skal7s_skal.stl`).
 
+### The board: jumpers and USB ports
+
+- **The two yellow jumpers** (bottom right, marked 120R / NC) connect a 120 Ω termination resistor for RS-485 and CAN.
+  From the factory they sit on **120R**. Move the **CAN jumper to NC** – the tractor bus is already terminated and an
+  extra resistor can disturb it. RS-485 is not used; that jumper does not matter.
+- **The USB-C port marked UART** (the upper one, next to the SD card) is used for installation, settings over the
+  cable and power in the tractor.
+- **The USB-C port marked USB** (the lower one) is not used. It shares pins with CAN, and the software switches them to CAN.
+
+**Printed ISOBUS plug:** real connectors for the cab socket are hard to find. [hardware/](hardware/README.md) has a
+printable three-part plug (core, locking ring and cover); the STL files are there.
+
 ### Connecting to ISOBUS
 
 The display only needs **CAN_H** and **CAN_L** (ISOBUS runs at 250 kbit/s).
@@ -53,10 +67,7 @@ The display only needs **CAN_H** and **CAN_L** (ISOBUS runs at 250 kbit/s).
   connect anything. On the tested Fendt S4 tractors **CAN_H was pin 4** and **CAN_L pin 2** in the cab's
   9-pin ISOBUS socket – but do not rely on that for your tractor.
 - Connect CAN_H to the board's **CAN H** and CAN_L to **CAN L**.
-- The bus is already terminated. Do **not** add your own 120 Ω resistor; if the board has a termination
-  jumper it must be off.
-- Check the board's jumpers against [Waveshare's wiki](https://www.waveshare.com/wiki/ESP32-S3-Touch-LCD-7)
-  so that the CAN part is connected.
+- The bus is already terminated. The CAN jumper must be on **NC** (see [The board](#the-board-jumpers-and-usb-ports)).
 - The plug must sit fully home in the socket – a loose plug gives dropouts.
 
 The display works in *listen only* mode: the CAN controller does not even send acknowledgements.
@@ -66,7 +77,7 @@ The display works in *listen only* mode: the CAN controller does not even send a
 Ready-made files are in [firmware/](firmware/): `Faltloggen_vN_usb.bin` is the complete image for the
 **first installation** (written at address `0x0`); `Faltloggen.bin` is the app only (used by updates).
 
-1. Connect the display to a computer with USB-C.
+1. Connect the display to a computer with USB-C in the port marked **UART** (the upper one).
 2. Open [Espressif's web flasher](https://espressif.github.io/esptool-js/) in Chrome or Edge and press **Connect**.
 3. Address **0x0**, choose `Faltloggen_vN_usb.bin`, press **Program** and wait.
 4. Press **reset** on the board.

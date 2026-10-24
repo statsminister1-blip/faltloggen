@@ -25,6 +25,8 @@ Skärmen **lyssnar bara**. Den skickar aldrig något på bussen och kan inte sty
 
 <p align="center"><img src="bilder/skarm_traktor.png" width="640" alt="Traktorsidan"></p>
 
+**Bilder på alla sidor:** [SKARMBILDER.md](SKARMBILDER.md)
+
 ## Innehåll
 
 - [Vad den visar](#vad-den-visar)
@@ -61,7 +63,7 @@ Kontrollera priser och lagerstatus själv – de ändras.
 | **Waveshare ESP32-S3-Touch-LCD-7** (7", 800 × 480, ESP32-S3 med 16 MB flash och 8 MB PSRAM, CAN) | 1 | [waveshare.com](https://www.waveshare.com/esp32-s3-touch-lcd-7.htm). Det är *den* modellen programmet är skrivet för – inte "7B" eller andra storlekar. |
 | microSD-kort, 32 GB | 1 | Formateras FAT32 över hela kortet. Kartbilder, spår, rapporter och (valfritt) loggar sparas här. |
 | USB-C-kabel och 5 V USB-ström i hytten | 1 | Minst 1 A. Skärmen drar ca 0,5 A. |
-| Kontakt till hyttens ISOBUS-uttag (in-cab, 9 poler) + två ledare | 1 | Se [Ansluta till ISOBUS](#ansluta-till-isobus). |
+| Kontakt till hyttens ISOBUS-uttag (in-cab, 9 poler) + två ledare | 1 | Svår att köpa – det finns en [utskrivbar plugg](hardware/README.md#isobus-plugg-utskriven-kontakt-till-hyttens-uttag). Se [Ansluta till ISOBUS](#ansluta-till-isobus). |
 | M3 × 8 cylinderskruv | 4 | Håller skärmen i skalet. |
 | M3-skruv för kabelklämmorna | 4 | Längd efter klämmorna, ca 8–10 mm. |
 | Filament, PETG eller ASA | ca 150 g | Till skalet. PLA blir för mjukt i en varm hytt. |
@@ -75,6 +77,20 @@ Kontrollera priser och lagerstatus själv – de ändras.
 mobilhållaren i Fendt-hytten (`skal7s_skal.stl`). Skärmen läggs i framifrån och skruvas fast bakifrån med
 4 × M3 × 8 i skärmens egna gängor. Kablarna kläms inne i skalet med två klämmor (dragavlastning).
 
+### Kortet: byglar och USB-uttag
+
+- **De två gula byglarna** (nere till höger, märkta 120R / NC) kopplar in ett 120 Ω-avslutningsmotstånd för
+  RS-485 respektive CAN. Från fabrik sitter de på **120R**. Flytta **CAN-bygeln till NC** – traktorns buss är redan
+  avslutad, och ett extra motstånd kan störa den. RS-485 används inte; den bygeln spelar ingen roll.
+- **USB-C-uttaget märkt UART** (det övre, närmast SD-kortet) används för installationen, inställningar via kabel och
+  ström i traktorn.
+- **USB-C-uttaget märkt USB** (det nedre) används inte. Det delar stift med CAN, och programmet kopplar om dem till CAN.
+
+### ISOBUS-pluggen
+
+Riktiga kontakter till hyttens uttag är svåra att få tag på. I [hardware/](hardware/README.md#isobus-plugg-utskriven-kontakt-till-hyttens-uttag)
+finns en utskrivbar plugg i tre delar (kärna, låsring och kåpa).
+
 ### Ansluta till ISOBUS
 
 Skärmen behöver bara **CAN_H** och **CAN_L** (ISOBUS kör 250 kbit/s).
@@ -83,10 +99,7 @@ Skärmen behöver bara **CAN_H** och **CAN_L** (ISOBUS kör 250 kbit/s).
   ansluter något. På de provade Fendt S4-traktorerna satt **CAN_H på stift 4** och **CAN_L på stift 2** i
   hyttens 9-poliga ISOBUS-uttag – men lita inte på det för din traktor.
 - Koppla CAN_H till kortets **CAN H** och CAN_L till **CAN L**.
-- Bussen är redan terminerad. Lägg **inte** till ett eget 120 Ω-motstånd; har kortet en bygel för
-  terminering ska den vara av.
-- Kortets CAN/USB-val görs i programmet. Kontrollera byglarna på kortet mot
-  [Waveshares wiki](https://www.waveshare.com/wiki/ESP32-S3-Touch-LCD-7) så att CAN-delen är inkopplad.
+- Bussen är redan avslutad. CAN-bygeln ska stå på **NC** (se [Kortet](#kortet-byglar-och-usb-uttag)).
 - Kontakten måste sitta i botten av uttaget – glapp ger avbrott.
 
 Skärmen arbetar i läget *listen only*: CAN-styrkretsen skickar inte ens kvittenser.
@@ -100,7 +113,7 @@ Färdiga filer finns i [firmware/](firmware/):
 
 **Enklast, i webbläsaren (Chrome eller Edge på en dator):**
 
-1. Koppla skärmen till datorn med USB-C (kortets USB-uttag).
+1. Koppla skärmen till datorn med USB-C i uttaget märkt **UART** (det övre).
 2. Öppna [Espressifs flash-verktyg i webbläsaren](https://espressif.github.io/esptool-js/) och tryck
    **Connect**. Välj skärmens port.
 3. Ange adress **0x0**, välj filen `Faltloggen_vN_usb.bin` och tryck **Program**. Vänta tills det är klart.

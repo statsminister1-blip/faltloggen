@@ -34,7 +34,7 @@ static uint32_t T=0; static uint32_t millis_(){return T;}
 #define millis millis_
 static bool demoOn=false;
 static char kartaStatus[200];
-#define FW_VERSION 1
+#include "version.h"
 typedef int portMUX_TYPE;
 #define portMUX_INITIALIZER_UNLOCKED 0
 #define portENTER_CRITICAL(x)

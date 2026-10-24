@@ -33,7 +33,7 @@ std::map<std::string,uint32_t> nvs;
 struct Preferences { void begin(const char*,bool){} void end(){} uint32_t getUInt(const char*k,uint32_t d){auto i=nvs.find(k);return i==nvs.end()?d:i->second;} void putUInt(const char*k,uint32_t v){nvs[k]=v;} void remove(const char*k){nvs.erase(k);} };
 static uint32_t T=0; static uint32_t millis_(){return T;}
 #define millis millis_
-#define FW_VERSION 50
+#include "version.h"
 struct BusDev{uint64_t name;uint32_t tcMs,vtMs;uint8_t known,flags;}; static BusDev busDev[256];
 static int nmTillv(uint64_t n){return (n>>21)&0x7FF;} static int nmKlass(uint64_t n){return (n>>49)&0x7F;} static int nmFunk(uint64_t n){return (n>>40)&0xFF;}
 struct {bool ok; char namn[33],ver[33];} ddop; static uint64_t ddopRawName=0;
@@ -49,7 +49,7 @@ class PcGfx : public Arduino_GFX { public: uint16_t fb[800*480]; PcGfx():Arduino
   bool begin(int32_t){return true;} void writePixelPreclipped(int16_t x,int16_t y,uint16_t c){fb[y*800+x]=c;} };
 int main(int argc,char**argv){
   // Ritar en sida till en bild (800 x 480 RGB565). Val (miljövariabler):
-  //   PAGE=<sidnummer> (se enum PG_* i ui.h), EN=1 engelska, NATT=1 nattläge, DEMO=1, NOBUS=1,
+  //   PAGE=<sidnummer> (se enum PG_* i ui.h), START=1 startbilden, EN=1 engelska, NATT=1 nattläge, DEMO=1, NOBUS=1,
   //   OFFER=<version> uppdateringsfrågan, OTA=1 uppdaterar, DLG=1 nolla kartan, SKARM=<namn>,
   //   INFO=0..1, RAW=1, BG=1, GARDIN=1, HEM=1, NOIMPL=1, EXP=1..3, NUM=1..3, KB2=1, SKIFT=1/k/c, TEMP, KRASCH=1,
   //   MAN=<kapitel> MANS=<sida>, UPPDAV=1, LOGGPA=1, DRAG, LUTF, LUTS, LJUS, FARG, SLIR.
@@ -102,12 +102,12 @@ int main(int argc,char**argv){
   strcpy(ui.karta.trigTxt,"ISOBUS auto"); strcpy(ui.karta.trigKort,"ISOBUS"); strcpy(ui.karta.startTxt,L("arbetar","working")); strcpy(ui.karta.stopTxt,L("slutar","stops")); ui.karta.trig=12; ui.karta.cfgAutoW=true; ui.karta.widthFromBus=true; ui.karta.widthM=24; ui.karta.cfgWidthM=6; ui.karta.logging=true; ui.karta.fuelL=48.2f; ui.karta.distKm=4.6f; strcpy(ui.karta.tileTxt,L("Satellitbild: alla 169 rutor finns","Satellite image: all 169 tiles present"));
   ui.kartaMpp=K_MPP_100M; ui.kartaConfirm=getenv("DLG")!=nullptr; ui.net.otaActive=getenv("OTA")!=nullptr; ui.net.otaPct=42; ui.net.latestVersion=getenv("OFFER")?atoi(getenv("OFFER")):FW_VERSION; ui.net.otaOffer=getenv("OFFER")?atoi(getenv("OFFER")):0; if(getenv("SKARM")) strncpy(ui.net.namn,getenv("SKARM"),32); ui.demo=getenv("DEMO")!=nullptr; if(getenv("NOBUS")) ui.busOk=false;
   ui.kartaGardin=getenv("GARDIN")!=nullptr; ui.karta.bakgrund=getenv("BG")?1:0; ui.valHem=getenv("HEM")!=nullptr; if(getenv("NOIMPL")){ui.genHasImpl=false; ui.vtAvail=false;} ui.trRawView=getenv("RAW")!=nullptr;
-  if(getenv("EXP")){ ui.exp.status=atoi(getenv("EXP")); strcpy(ui.exp.namn,L("Norra åkern","North field")); strcpy(ui.exp.fil,"2026-10-22_2135_norra_akern.pdf"); strcpy(ui.exp.ap,"Faltloggen"); strcpy(ui.exp.fel,L("SD-kortet saknas.","No SD card.")); const char*R[]={"3,29 ha bearbetat","Bränsle 14,8 l, varav 14,7 l i arbete","4,5 l/ha  ·  20,4 l/h i arbete","Tid på fältet 44 min, varav 43 min i arbete","Körsträcka 5,3 km  ·  snitthastighet 8,0 km/h","4,54 ha/h  ·  279 kr/ha"}; for(int i=0;i<6;i++) strcpy(ui.exp.rad[i],R[i]); ui.exp.nRad=6; ui.exp.stationer=1; ui.exp.hamtade=0; }
+  if(getenv("EXP")){ ui.exp.status=atoi(getenv("EXP")); strcpy(ui.exp.namn,L("Norra åkern","North field")); strcpy(ui.exp.fil,"2026-10-22_2135_norra_akern.pdf"); strcpy(ui.exp.ap,"Faltloggen"); strcpy(ui.exp.fel,L("SD-kortet saknas.","No SD card.")); const char*R[]={L("3,29 ha bearbetat","3.29 ha worked"),L("Bränsle 14,8 l, varav 14,7 l i arbete","Fuel 14.8 l, of which 14.7 l working"),L("4,5 l/ha  ·  20,4 l/h i arbete","4.5 l/ha  ·  20.4 l/h working"),L("Tid på fältet 44 min, varav 43 min i arbete","Time in field 44 min, of which 43 min working"),L("Körsträcka 5,3 km  ·  snitthastighet 8,0 km/h","Distance 5.3 km  ·  average speed 8.0 km/h"),L("4,54 ha/h  ·  279 kr/ha","4.54 ha/h  ·  279 kr/ha")}; for(int i=0;i<6;i++) strcpy(ui.exp.rad[i],R[i]); ui.exp.nRad=6; ui.exp.stationer=1; ui.exp.hamtade=0; }
   if(getenv("SKIFT")){ ui.karta.skiftHa=12.5f; ui.karta.skiftKvarHa=3.2f; ui.karta.skiftMin=getenv("SKIFT")[0]=='k'?-1:95; strcpy(ui.karta.skiftKlass,"15:42"); ui.karta.skiftKlart=getenv("SKIFT")[0]=='c'; ui.karta.areaHa=9.3f; } else { ui.karta.skiftHa=0; }
   if(getenv("NUM")){ ui.numFor=atoi(getenv("NUM")); strcpy(ui.numText, getenv("NUM")[0]=='3' ? "35.65" : "1050"); } if(getenv("KB2")){ ui.kbFor=2; strcpy(ui.kbText,"Norra åkern"); }
   { EnhView &e=ui.enh; e.tempC=getenv("TEMP")?atof(getenv("TEMP")):48.6f; e.tempMin=31.2f; e.tempMax=e.tempC+2.3f; e.psFreeKB=4310; e.psTotKB=8192; e.psBigKB=3968; e.inFreeKB=118; e.inTotKB=352; e.inMinKB=74; e.inBigKB=60; e.sdKand=true; e.sdTotMB=30436; e.sdFriMB=22780; e.upSek=2*3600+13*60; e.bootNo=219; strcpy(e.omstart,getenv("KRASCH")?L("KRASCH (panic)","CRASH (panic)"):L("ström på","power on")); strcpy(e.part,"ota_1"); e.ramarS=203; e.ramarTot=1584211; e.canState=1; e.canMiss=0; e.canOverrun=0; e.canBusErr=2; e.ritN=1180; e.ritSnitt=96; e.ritMax=212; strcpy(ui.net.ip,"192.168.1.47"); }
   ui.dubbel=getenv("DUBBEL")!=nullptr; ui.dubbelFraga=getenv("DUBBEL") && getenv("DUBBEL")[0]=='2';
-  uiDraw(g,ui);
+  if(getenv("START")) uiDrawSplash(g); else uiDraw(g,ui);
   FILE*o=fopen(argv[1],"wb"); fwrite(g->fb,2,800*480,o); fclose(o);
 }
 static const char *kBildText() { return L("Satellitbild: Sentinel-2 cloudless 2016 av EOX IT Services GmbH (CC BY 4.0)", "Satellite image: Sentinel-2 cloudless 2016 by EOX IT Services GmbH (CC BY 4.0)"); }

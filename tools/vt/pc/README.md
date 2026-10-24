@@ -14,7 +14,8 @@ mkdir -p sd && PAGE=6 ./vtview_test ut.raw && python3 topng.py ut.raw ut.png
 
 Sidorna (PAGE): 0 viloläge, 1 inställningar, 2 WiFi, 3 tangentbord, 4 diagnos, 5 redskap, 6 traktor, 7 karta,
 8 kartinställningar, 9 startval, 10 terminal, 11 analys, 12 sifferfält, 13 fältrapport, 14 manual, 15 enhetsinfo,
-16 MER, 17 feedback. `EN=1` ritar på engelska, `NATT=1` i nattläge. Fler val står överst i `main()` i `vtview_test.cpp`.
+16 MER, 17 feedback. `START=1` ritar startbilden, `EN=1` på engelska, `NATT=1` i nattläge.
+Bilderna i `bilder/skarmar/` (se `SKARMBILDER.md`) är gjorda så här. Fler val står överst i `main()` i `vtview_test.cpp`.
 
 ## Kartan och fältrapporten
 
