@@ -1,0 +1,12 @@
+build/
+*.elf
+*.map
+CONFIG.TXT
+tools/vt/pc/*.o
+tools/vt/pc/*.raw
+tools/vt/pc/vtview_test
+tools/vt/pc/kartatest
+tools/vt/pc/falttest
+tools/vt/pc/sd/
+tools/vt/pc/sdk/
+__pycache__/

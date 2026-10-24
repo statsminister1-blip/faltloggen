@@ -1,0 +1,21 @@
+# Exempel på /CONFIG.TXT i SD-kortets rot. Döp om filen till CONFIG.TXT.
+# Rader som börjar med # läses inte. Filen läses vid varje start.
+# Samma rader kan skickas via USB-kabeln (115200 baud); "visa" skriver ut inställningarna.
+
+# Skärmens namn (visas på skärmen och är namnet på skärmens eget WiFi vid fältrapporten)
+namn=Traktor 1
+
+# Extra WiFi-nät (nätet du väljer på skärmen sparas separat)
+wifi1_ssid=Maskinhallen
+wifi1_pass=hemligt
+#wifi2_ssid=
+#wifi2_pass=
+
+# Valuta i bränsleanalysen och fältrapporten
+valuta=kr
+
+# Uppdateringar: PA = fråga när en ny version finns, AV = leta aldrig
+uppdatering=PA
+
+# Bara om du har en egen kopia (fork) av programmet som uppdateringarna ska hämtas från
+#uppdatering_arkiv=ditt-konto/faltloggen
