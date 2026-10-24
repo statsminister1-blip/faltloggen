@@ -74,12 +74,13 @@ enum {
   B_UPPD_PA, B_UPPD_AV, B_OTA_AV, // uppdateringar på/av (B_OTA_AV = "stäng av" i uppdateringsfrågan)
   B_FB_OPEN, B_FB_BACK,           // feedback
   B_OM_OPEN,                      // om Fältloggen: ansvar, licenser (öppnar manualens sista kapitel)
+  B_DUB_OPEN, B_DUB_JA, B_DUB_NEJ, // byt programvariant (bara med fyra programplatser, se dubbel.h)
   B_KEY0 = 200                   // B_KEY0 + rad*16 + kolumn
 };
 
 static_assert(B_NUM9 < B_KEY0, "knapp-id:n räcker inte");
 static_assert(B_MAN_KAP_END < B_KEY0, "knapp-id:n räcker inte (manualen)");
-static_assert(B_OM_OPEN < B_KEY0, "knapp-id:n räcker inte");
+static_assert(B_DUB_NEJ < B_KEY0, "knapp-id:n räcker inte");
 
 struct DiagRow {
   uint8_t  sa, da;
@@ -313,6 +314,8 @@ struct UiState {
   // nät
   NetView  net;
   EnhView  enh;           // v44: enhetsinfo
+  bool     dubbel;         // en annan programvariant finns installerad (dubbel.h): knappen BYT visas
+  bool     dubbelFraga;    // frågan "Starta om i den andra varianten?" visas
 };
 
 // ---------------------------------------------------------------- Färger (RGB565)
@@ -2270,6 +2273,11 @@ static void uiDrawEnhet(Arduino_GFX *g, const UiState &s) {
   char b[128], t1[24], t2[24];
   g->fillScreen(P.scr);
   s4Key(g, s, S4_RX, 6, S4_KW, 108, B_ENH_BACK, false, icTillbaka, 50);
+  if (s.dubbel) {                                   // annan programvariant installerad (dubbel.h)
+    s4KeyT(g, s, S4_RX, 362, S4_KW, 110, B_DUB_OPEN, "", u8g2_font_dv13b_tf);
+    uiTextCenter(g, S4_RX + S4_KW / 2, 402, L("BYT TILL", "SWITCH TO"), P.ico, u8g2_font_dv13b_tf);
+    uiTextCenter(g, S4_RX + S4_KW / 2, 424, L("PRIVAT", "PRIVATE"), P.ico, u8g2_font_dv13b_tf);
+  }
   const int xL = 2, xR = 354, w = 346, yT = 2, hT = 234, yB = 240, hB = 238;
 
   // ---- Temperatur
@@ -2368,6 +2376,14 @@ static void uiDrawEnhet(Arduino_GFX *g, const UiState &s) {
   if (e.ritN) snprintf(b, sizeof(b), L("snitt %lu ms  ·  max %lu ms", "avg %lu ms  ·  max %lu ms"), (unsigned long)e.ritSnitt, (unsigned long)e.ritMax);
   else strcpy(b, "-");
   uiEnhRad(g, xR, y, w, L("Ritning", "Drawing"), b); y += rh;
+  if (s.dubbelFraga) {
+    uiNBtn = 0;
+    s4Dialog(g, 150, 110, 500, 260, L("Byt variant", "Switch variant"));
+    uiTextCenter(g, 400, 178, L("Starta om i privata varianten?", "Restart in the private variant?"), P.txt, u8g2_font_dv20b_tf);
+    uiTextCenter(g, 400, 214, L("Kartan, spåren och inställningarna följer med.", "The map, tracks and settings come along."), P.dim, u8g2_font_dv15_tf);
+    s4KeyT(g, s, 176, 278, 210, 72, B_DUB_NEJ, L("NEJ", "NO"), u8g2_font_dv20b_tf);
+    s4KeyT(g, s, 414, 278, 210, 72, B_DUB_JA, L("JA", "YES"), u8g2_font_dv20b_tf, 2);
+  }
 }
 
 // ---------------------------------------------------------------- Manualen

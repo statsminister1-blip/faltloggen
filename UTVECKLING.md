@@ -83,3 +83,11 @@ Skickas inte: vridmoment, kylvätsketemperatur, bränslenivå, AdBlue, fyrhjulsd
 
 Se [tools/vt/pc/README.md](tools/vt/pc/README.md): skärmens riktiga ritkod kompileras på datorn och ritar
 valfri sida till en bild, på svenska och engelska.
+
+## Två varianter på samma skärm (valfritt)
+
+För den som utvecklar en egen variant vid sidan av den publika: med en partitionstabell med fyra programplatser
+(`ota_0`–`ota_3`, 3 MB vardera, i stället för den 9 MB stora FAT-ytan som inte används) kan två varianter ligga på
+samma skärm, en i `ota_0/ota_1` och en i `ota_2/ota_3` (se `src/Faltloggen/dubbel.h`). Varje variant uppdaterar sig
+bara inom sitt eget par, och under Inställningar → ENHET visas en knapp för att starta om i den andra varianten.
+Med den vanliga tabellen gör koden ingenting och knappen visas aldrig.

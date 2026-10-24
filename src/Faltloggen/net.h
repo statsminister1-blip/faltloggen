@@ -31,7 +31,6 @@
 #include <esp_mac.h>
 #include <WiFiClientSecure.h>
 #include <HTTPClient.h>
-#include <Update.h>
 #include <Preferences.h>
 #include <WebServer.h>
 #include <DNSServer.h>
@@ -39,6 +38,7 @@
 #include "logger.h"
 #include "version.h"
 #include "lang.h"
+#include "dubbel.h"
 
 #define NET_SLOTS 3
 #define SCAN_MAX  12
@@ -319,7 +319,9 @@ static void otaInstall(int latest) {
   WiFiClient *st = http.getStreamPtr();
   net.otaActive = true;
   net.otaPct = 0;
-  if (!Update.begin(clen)) {
+  const esp_partition_t *plats = dubbelUppdPlats();     // vanligtvis "nästa" plats (se dubbel.h)
+  esp_ota_handle_t oh = 0;
+  if (!plats || esp_ota_begin(plats, clen, &oh) != ESP_OK) {
     netMsg("Uppdatering kunde inte starta"); otaNote("v%d - kunde inte starta", latest);
     net.otaActive = false; http.end(); return;
   }
@@ -331,18 +333,19 @@ static void otaInstall(int latest) {
     if (a <= 0) { if (!http.connected()) break; delay(5); continue; }
     int n = st->read(buf, min(a, (int)sizeof(buf)));
     if (n <= 0) continue;
-    if (Update.write(buf, n) != (size_t)n) break;
+    if (esp_ota_write(oh, buf, n) != ESP_OK) break;
     got += n;
     net.otaPct = (int)(got * 100 / clen);
   }
   http.end();
-  if (got == clen && Update.end(true)) {           // Update kontrollerar att programmet är helt (kontrollsumma)
+  bool helt = got == clen && esp_ota_end(oh) == ESP_OK;   // esp_ota_end kontrollerar att programmet är helt
+  if (helt && esp_ota_set_boot_partition(plats) == ESP_OK) {
     netMsg("Version %d installerad, startar om", latest);
     if (netBeforeRestart) netBeforeRestart();
     delay(500);
     ESP.restart();
   } else {
-    Update.abort();
+    if (!helt) esp_ota_abort(oh);
     netMsg("Uppdatering avbruten (%ld av %ld)", got, clen);
     otaNote("v%d - avbruten", latest);
     net.otaActive = false;

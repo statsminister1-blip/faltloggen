@@ -52,6 +52,7 @@
 #include "vtview.h"
 #include "analys.h"
 #include "falt.h"                 // fältrapport som PDF
+#include "dubbel.h"               // två programvarianter på samma skärm (bara med fyra programplatser)
 
 // ============================================================================
 //  KONFIGURATION
@@ -484,6 +485,9 @@ static void onButton(int id) {
     case B_UPPD_AV:  netSetUppd(false); break;
     case B_FB_OPEN:  ui.page = PG_FEEDBACK; break;
     case B_FB_BACK:  ui.page = PG_MER; break;
+    case B_DUB_OPEN: ui.dubbelFraga = true; break;
+    case B_DUB_NEJ:  ui.dubbelFraga = false; break;
+    case B_DUB_JA:   ui.dubbelFraga = false; dubbelByt(beforeRestart); break;
     case B_OM_OPEN:  ui.page = PG_MANUAL; ui.manKap = MAN_N - 1; ui.manSida = 0; ui.manBack = PG_MER; break;
     // Karta
     case B_KARTA:    ui.page = PG_KARTA; break;
@@ -586,8 +590,8 @@ static void onButton(int id) {
       break;
     case B_DIAG_BACK: ui.page = PG_SETTINGS; break;
     // v44: enhetsinfo
-    case B_ENH_OPEN:  ui.page = PG_ENHET; reqSdInfo = true; enhFill(true); break;
-    case B_ENH_BACK:  ui.page = PG_SETTINGS; break;
+    case B_ENH_OPEN:  ui.dubbelFraga = false; ui.page = PG_ENHET; reqSdInfo = true; enhFill(true); break;
+    case B_ENH_BACK:  ui.dubbelFraga = false; ui.page = PG_SETTINGS; break;
     case B_KB_SHIFT:  ui.kbMode = (ui.kbMode == 1) ? 0 : 1; break;
     case B_KB_MODE:   ui.kbMode = (ui.kbMode == 2) ? 0 : 2; break;
     case B_KB_BACK: {
@@ -825,6 +829,7 @@ void setup() {
     snprintf(bootOrsakEn, sizeof(bootOrsakEn), "%s%s", ok ? E[rr] : "?", rapp ? " - during the field report" : "");
     rappSteg = 0;
   }
+  if (dubbelStart()) otaMarkedValid = true;           // skärmen har just växlat variant (dubbel.h)
   Wire.begin(I2C_SDA, I2C_SCL, 400000);
   exioInit();
   i2cMutex = xSemaphoreCreateMutex();
@@ -869,6 +874,7 @@ void setup() {
   ui.tcAddr = -1;
   ui.version = FW_VERSION;
   ui.autoPage = PG_TRAKTOR;
+  ui.dubbel = dubbelAnnan() != nullptr;
   ui.kartaMpp = K_MPP_100M;
 
   loggerBegin(boot);

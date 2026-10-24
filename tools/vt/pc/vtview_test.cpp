@@ -106,6 +106,7 @@ int main(int argc,char**argv){
   if(getenv("SKIFT")){ ui.karta.skiftHa=12.5f; ui.karta.skiftKvarHa=3.2f; ui.karta.skiftMin=getenv("SKIFT")[0]=='k'?-1:95; strcpy(ui.karta.skiftKlass,"15:42"); ui.karta.skiftKlart=getenv("SKIFT")[0]=='c'; ui.karta.areaHa=9.3f; } else { ui.karta.skiftHa=0; }
   if(getenv("NUM")){ ui.numFor=atoi(getenv("NUM")); strcpy(ui.numText, getenv("NUM")[0]=='3' ? "35.65" : "1050"); } if(getenv("KB2")){ ui.kbFor=2; strcpy(ui.kbText,"Norra åkern"); }
   { EnhView &e=ui.enh; e.tempC=getenv("TEMP")?atof(getenv("TEMP")):48.6f; e.tempMin=31.2f; e.tempMax=e.tempC+2.3f; e.psFreeKB=4310; e.psTotKB=8192; e.psBigKB=3968; e.inFreeKB=118; e.inTotKB=352; e.inMinKB=74; e.inBigKB=60; e.sdKand=true; e.sdTotMB=30436; e.sdFriMB=22780; e.upSek=2*3600+13*60; e.bootNo=219; strcpy(e.omstart,getenv("KRASCH")?L("KRASCH (panic)","CRASH (panic)"):L("ström på","power on")); strcpy(e.part,"ota_1"); e.ramarS=203; e.ramarTot=1584211; e.canState=1; e.canMiss=0; e.canOverrun=0; e.canBusErr=2; e.ritN=1180; e.ritSnitt=96; e.ritMax=212; strcpy(ui.net.ip,"192.168.1.47"); }
+  ui.dubbel=getenv("DUBBEL")!=nullptr; ui.dubbelFraga=getenv("DUBBEL") && getenv("DUBBEL")[0]=='2';
   uiDraw(g,ui);
   FILE*o=fopen(argv[1],"wb"); fwrite(g->fb,2,800*480,o); fclose(o);
 }
