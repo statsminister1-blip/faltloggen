@@ -82,6 +82,8 @@ mobilhållaren i Fendt-hytten (`skal7s_skal.stl`). Skärmen läggs i framifrån 
 - **De två gula byglarna** (nere till höger, märkta 120R / NC) kopplar in ett 120 Ω-avslutningsmotstånd för
   RS-485 respektive CAN. Från fabrik sitter de på **120R**. Flytta **CAN-bygeln till NC** – traktorns buss är redan
   avslutad, och ett extra motstånd kan störa den. RS-485 används inte; den bygeln spelar ingen roll.
+- **Omkopplaren UART1 / UART2** ska stå på **UART1**. Den väljer vilken av processorns serieportar som går till
+  UART-uttaget; i UART1 fungerar både installationen och inställningar via kabel.
 - **USB-C-uttaget märkt UART** (det övre, närmast SD-kortet) används för installationen, inställningar via kabel och
   ström i traktorn.
 - **USB-C-uttaget märkt USB** (det nedre) används inte. Det delar stift med CAN, och programmet kopplar om dem till CAN.
@@ -113,7 +115,7 @@ Färdiga filer finns i [firmware/](firmware/):
 
 **Enklast, i webbläsaren (Chrome eller Edge på en dator):**
 
-1. Koppla skärmen till datorn med USB-C i uttaget märkt **UART** (det övre).
+1. Ställ omkopplaren på **UART1** och koppla skärmen till datorn med USB-C i uttaget märkt **UART** (det övre).
 2. Öppna [Espressifs flash-verktyg i webbläsaren](https://espressif.github.io/esptool-js/) och tryck
    **Connect**. Välj skärmens port.
 3. Ange adress **0x0**, välj filen `Faltloggen_vN_usb.bin` och tryck **Program**. Vänta tills det är klart.

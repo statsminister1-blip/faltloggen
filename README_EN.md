@@ -52,6 +52,8 @@ quick mount for the phone holder in the Fendt cab (`skal7s_skal.stl`).
 - **The two yellow jumpers** (bottom right, marked 120R / NC) connect a 120 Ω termination resistor for RS-485 and CAN.
   From the factory they sit on **120R**. Move the **CAN jumper to NC** – the tractor bus is already terminated and an
   extra resistor can disturb it. RS-485 is not used; that jumper does not matter.
+- **The UART1 / UART2 switch** must be set to **UART1**. It selects which of the processor's serial ports goes to the
+  UART port; in UART1 both installation and settings over the cable work.
 - **The USB-C port marked UART** (the upper one, next to the SD card) is used for installation, settings over the
   cable and power in the tractor.
 - **The USB-C port marked USB** (the lower one) is not used. It shares pins with CAN, and the software switches them to CAN.
@@ -77,7 +79,7 @@ The display works in *listen only* mode: the CAN controller does not even send a
 Ready-made files are in [firmware/](firmware/): `Faltloggen_vN_usb.bin` is the complete image for the
 **first installation** (written at address `0x0`); `Faltloggen.bin` is the app only (used by updates).
 
-1. Connect the display to a computer with USB-C in the port marked **UART** (the upper one).
+1. Set the switch to **UART1** and connect the display to a computer with USB-C in the port marked **UART** (the upper one).
 2. Open [Espressif's web flasher](https://espressif.github.io/esptool-js/) in Chrome or Edge and press **Connect**.
 3. Address **0x0**, choose `Faltloggen_vN_usb.bin`, press **Program** and wait.
 4. Press **reset** on the board.
